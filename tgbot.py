@@ -3,7 +3,7 @@ import requests
 import soundfile as sf
 
 
-TELEGRAM_API_TOKEN = '1329735956:AAEBoEBpIJ6FV1N2OOQjX347g68FBplDdAo'
+TELEGRAM_API_TOKEN = ''
 bot = telebot.TeleBot(TELEGRAM_API_TOKEN)
 
 
