@@ -4,23 +4,32 @@ import cv2
 import numpy as np
 import io
 import pydub
+import os
 
 
-TELEGRAM_API_TOKEN = ''
+TELEGRAM_API_TOKEN = 'token'
 bot = telebot.TeleBot(TELEGRAM_API_TOKEN)
-AUDIO_PATH = r'C:\Boot\audio'
-PHOTO_PATH = r'C:\Boot\photo'
-pydub.AudioSegment.converter = r"C:\Boot\ffmpeg\bin\ffmpeg.exe"
+AUDIO_PATH = r'C:\bot\audio'
+PHOTO_PATH = r'C:\boot\photo'
+pydub.AudioSegment.converter = r"C:\bot\ffmpeg\bin\ffmpeg.exe"
 
 
 @bot.message_handler(content_types=['voice'])
 def save_audio(message):
+    # get voice id
     file_info = bot.get_file(message.voice.file_id)
-    print(message)
-    
+    # check user_dir
+    user_dir = f'{AUDIO_PATH}\{message.from_user.id}'
+    if os.path.exists(user_dir):
+        pass
+    else:
+        os.mkdir(user_dir)
+    # get voice as bytes
     file = requests.get(f'https://api.telegram.org/file/bot{TELEGRAM_API_TOKEN}/{file_info.file_path}')
     s = io.BytesIO(file.content)
-    pydub.AudioSegment.from_raw(s, sample_width=1, frame_rate=16000, channels=1).export(f"{AUDIO_PATH}\\audio_message_0.wav", format='wav')
+    # saving audio as wav in user_dir
+    pydub.AudioSegment.from_raw(s, sample_width=1, frame_rate=16000, channels=1).export(
+        f"{user_dir}\\audio_message_{message.message_id}.wav", format='wav')
 
 
 @bot.message_handler(content_types=['photo'])
@@ -49,4 +58,3 @@ def save_photo(message):
 
 
 bot.polling()
-
